@@ -9,9 +9,6 @@ app.get("/", (req, res) => {
     res.send("Webhook is live!");
 });
 
-app.post("/webhook", async (req, res) => {
-    console.log("Received request body:", JSON.stringify(req.body, null, 2));
-
     app.post("/webhook", async (req, res) => {
     console.log("Received request body:", JSON.stringify(req.body, null, 2));
 
