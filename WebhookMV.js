@@ -9,29 +9,31 @@ app.get("/", (req, res) => {
     res.send("Webhook is live!");
 });
 
-    app.post("/webhook", async (req, res) => {
+app.post("/webhook", async (req, res) => {
     console.log("Received request body:", JSON.stringify(req.body, null, 2));
 
-
     const query = req.body?.queryResult?.queryText || "No query received";
-     const searchTerm = req.body.queryResult?.parameters?.any 
-        ? req.body.queryResult.parameters.any.replace(/ /g, "_") 
-        : req.body.queryResult?.queryText;  // Fallback to query text if no parameter is found
+    let searchTerm = req.body.queryResult?.parameters?.any || query;  
+
+    // Clean up search term: Remove question words
+    searchTerm = searchTerm
+        .toLowerCase()
+        .replace(/\b(who is|what is|tell me about|define)\b/gi, "")  // Remove unnecessary words
+        .trim()
+        .replace(/ /g, "_");  // Convert spaces to underscores
 
     if (!searchTerm) {
         return res.json({ fulfillmentText: "Sorry, I couldn't understand your request." });
     }
 
-    const formattedSearchTerm = searchTerm.replace(/ /g, "_");
-
     try {
-        console.log(`Fetching Wikipedia data for: ${formattedSearchTerm}`);
+        console.log(`Fetching Wikipedia data for: ${searchTerm}`);
         const response = await axios.get(
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${formattedSearchTerm}`
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
         );
 
         if (!response.data || !response.data.extract) {
-            console.log("No data found for", formattedSearchTerm);
+            console.log("No data found for", searchTerm);
             return res.json({ fulfillmentText: "Sorry, I couldn't find anything on Wikipedia." });
         }
 
