@@ -12,7 +12,15 @@ app.get("/", (req, res) => {
 
 app.post("/webhook", async (req, res) => {
     const query = req.body.queryResult.queryText;
-    const searchTerm = req.body.queryResult.parameters.person.name.replace(/ /g, "_");
+    const searchTerm = req.body.queryResult?.parameters?.person?.name 
+    ? req.body.queryResult.parameters.person.name.replace(/ /g, "_") 
+    : null;
+
+if (!searchTerm) {
+    return res.json({ fulfillmentText: "Sorry, I couldn't understand the name." });
+}
+
+    console.log("Received request body:", JSON.stringify(req.body, null, 2));
 
 
     try {
