@@ -12,12 +12,17 @@ app.get("/", (req, res) => {
 app.post("/webhook", async (req, res) => {
     console.log("Received request body:", JSON.stringify(req.body, null, 2));
 
+    app.post("/webhook", async (req, res) => {
+    console.log("Received request body:", JSON.stringify(req.body, null, 2));
+
+
     const query = req.body?.queryResult?.queryText || "No query received";
-    const searchTerm = req.body?.queryResult?.parameters?.person?.name;
+     const searchTerm = req.body.queryResult?.parameters?.any 
+        ? req.body.queryResult.parameters.any.replace(/ /g, "_") 
+        : req.body.queryResult?.queryText;  // Fallback to query text if no parameter is found
 
     if (!searchTerm) {
-        console.log("Person name is missing in request.");
-        return res.json({ fulfillmentText: "Sorry, I couldn't understand the name." });
+        return res.json({ fulfillmentText: "Sorry, I couldn't understand your request." });
     }
 
     const formattedSearchTerm = searchTerm.replace(/ /g, "_");
