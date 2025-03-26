@@ -40,15 +40,7 @@ app.post("/webhook", async (req, res) => {
         console.log("Wikipedia API Response:", response.data);
         const reply = response.data.extract;
 
-        res.json({
-            fulfillmentMessages: [
-                {
-                    text: {
-                        text: [reply]
-                    }
-                }
-            ]
-        });
+        res.json({ fulfillmentText: reply });
     } catch (error) {
         console.error("Error fetching data:", error.message);
         res.json({ fulfillmentText: "There was an error fetching data. Please try again later." });
